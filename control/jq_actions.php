@@ -8,7 +8,7 @@ switch($_GET['action']) {
 		foreach($explode as $block) {
 			if(!empty($block)) {
 				$count++;
-				if(isset($_GET['place'])) $db->update('blocks','order',$count,array('id','place'),array($block,$_GET['place']));
+				if(isset($_GET['place'])) $db->update('blocks','order',$count,array('id','place'),array($block,mysql_real_escape_string($_GET['place'])));
 				else $db->update('blocks','order',$count,'id',$block);
 			}
 		}
@@ -20,7 +20,7 @@ switch($_GET['action']) {
 		break;
 	case 'notes_new':
 		$db->insert('cp_notes',array('pos_x','pos_y','width','height','jq_id','time'),
-		array($_GET['pos_x'],$_GET['post_y'],$_GET['width'],$_GET['height'],$_GET['jq_id'],time()));
+		array(mysql_real_escape_string($_GET['pos_x']),mysql_real_escape_string($_GET['post_y']),mysql_real_escape_string($_GET['width']),mysql_real_escape_string($_GET['height']),mysql_real_escape_string($_GET['jq_id']),time()));
 		break;
 	case 'notes_edit':
 		function utf8_urldecode($str) {
@@ -29,14 +29,14 @@ switch($_GET['action']) {
 		}
 		$text = utf8_urldecode($_GET['text']);
 		$db->update('cp_notes',array('text','pos_x','pos_y','width','height','time'),
-		array($text,$_GET['pos_x'],$_GET['pos_y'],$_GET['width'],$_GET['height'],time()),
-		'jq_id',$_GET['jq_id']);
+		array($text,mysql_real_escape_string($_GET['pos_x']),mysql_real_escape_string($_GET['pos_y']),mysql_real_escape_string($_GET['width']),mysql_real_escape_string($_GET['height']),time()),
+		'jq_id',mysql_real_escape_string($_GET['jq_id']));
 		break;
 	case 'notes_delete':
-		$db->delete('cp_notes','jq_id',$_GET['jq_id']);
+		$db->delete('cp_notes','jq_id',mysql_real_escape_string($_GET['jq_id']));
 		break;
 	case 'autocomplete':
-		$table = $_GET['table']; $field = $_GET['field']; $q = $_GET['term'];
+		$table = mysql_real_escape_string($_GET['table']); $field = mysql_real_escape_string($_GET['field']); $q = mysql_real_escape_string($_GET['term']);
 		$results = $db->fetch($table,"[%]$field",$q);
 		$return_array = array();
 		foreach($results as $result) {
@@ -47,7 +47,7 @@ switch($_GET['action']) {
 		echo json_encode($return_array);
 		break;
 	case 'medialib_create_dir':
-		$insert = $db->insert('uploads_dir', array('name'), array($_POST['name']));
+		$insert = $db->insert('uploads_dir', array('name'), array(mysql_real_escape_string($_POST['name'])));
 		if($insert) {
 			$r = $db->fetch('uploads_dir',false,false,'id','DESC');
 			echo $r[0]['id'];
@@ -76,8 +76,8 @@ switch($_GET['action']) {
 		}
 		break;
 	case 'medialib_showfiles':
-		$dir = $_GET['dir'];
-		$page = $_GET['page'];
+		$dir = mysql_real_escape_string($_GET['dir']);
+		$page = mysql_real_escape_string($_GET['page']);
 		if(empty($page)) $page = 1;
 		$files = $db->fetch('uploads','dir',$dir,'id','DESC',$page,45);
 		$pages_array = $db->pages_array('uploads','dir',$dir,$page,45);
