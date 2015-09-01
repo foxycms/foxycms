@@ -17,10 +17,10 @@ switch ($action) {
 		$smarty->assign('tmp_page', 'styles_add.htm');
 		break;
 	case 'start_add_style':
-		$code = $_POST['code'];
-		$name = $_POST['name'];
-		$status = $_POST['status'];
-		$insert = $db->insert('styles', array('style_code', 'style_name', 'status', 'version', 'designer_name', 'designer_email'), array($code, $name, $status, $_POST['version'], $_POST['designer_name'], $_POST['designer_email']));
+		$code = mysql_real_escape_string($_POST['code']);
+		$name = mysql_real_escape_string($_POST['name']);
+		$status = mysql_real_escape_string($_POST['status']);
+		$insert = $db->insert('styles', array('style_code', 'style_name', 'status', 'version', 'designer_name', 'designer_email'), array($code, $name, $status, mysql_real_escape_string($_POST['version']), mysql_real_escape_string($_POST['designer_name']), mysql_real_escape_string($_POST['designer_email'])));
 		if ($insert) $tmpl->msg('done', '?show=styles',1);
 		else $tmpl->msg('error');
 		break;
@@ -32,10 +32,10 @@ switch ($action) {
 		break;
 	case 'start_edit_style':
 		$id = (int) $_POST['id'];
-		$code = $_POST['code'];
-		$name = $_POST['name'];
-		$status = $_POST['status'];
-		$update = $db->update('styles', array('style_code', 'style_name', 'status', 'version', 'designer_name', 'designer_email'), array($code, $name, $status, $_POST['version'], $_POST['designer_name'], $_POST['designer_email']), 'id', $id);
+		$code = mysql_real_escape_string($_POST['code']);
+		$name = mysql_real_escape_string($_POST['name']);
+		$status = mysql_real_escape_string($_POST['status']);
+		$update = $db->update('styles', array('style_code', 'style_name', 'status', 'version', 'designer_name', 'designer_email'), array($code, $name, $status, mysql_real_escape_string($_POST['version']), mysql_real_escape_string($_POST['designer_name']), mysql_real_escape_string($_POST['designer_email'])), 'id', $id);
 		if ($update) $tmpl->msg('done', '?show=styles',1);
 		else $tmpl->msg('error');
 		break;
@@ -60,7 +60,7 @@ switch ($action) {
 		break;
 	case 'search_templates':
 		$style_id = (int) $_GET['style_id'];
-		$q = $_GET['q'];
+		$q = mysql_real_escape_string($_GET['q']);
 		$page = isset($_GET['page']) ? $_GET['page'] : '';
 		if (!empty($style_id)) {
 			$templates = $db->fetch('templates', array('style_id','[%]template'), array($style_id,$q),'id','DESC',$page,$settings['control_max']);
@@ -81,16 +81,16 @@ switch ($action) {
 		$smarty->assign('tmp_page', 'templates_add.htm');
 		break;
 	case 'start_add_template':
-		$template = $_POST['template'];
-		$style_id = $_POST['style_id'];
-		$source = $_POST['source'];
-		$owner = $_POST['owner'];
+		$template = mysql_real_escape_string($_POST['template']);
+		$style_id = mysql_real_escape_string($_POST['style_id']);
+		$source = mysql_real_escape_string($_POST['source']);
+		$owner = mysql_real_escape_string($_POST['owner']);
 		$add = $tmpl->add_template($template, $source, $style_id, $owner);
 		if ($add) $tmpl->msg('done', '?show=styles&action=show_templates&style_id='.$style_id);
 		else $tmpl->msg('error');
 		break;
 	case 'edit_template':
-		$id = $_GET['id'];
+		$id = mysql_real_escape_string($_GET['id']);
 		$styles = $db->fetch('styles');
 		$smarty->assign('styles', $styles);
 		$modules = $db->fetch('modules');
@@ -101,9 +101,9 @@ switch ($action) {
 		break;
 	case 'start_edit_template':
 		$id = (int) $_POST['id'];
-		$style_id = $_POST['style_id'];
-		$source = $_POST['source'];
-		$owner = $_POST['owner'];
+		$style_id = mysql_real_escape_string($_POST['style_id']);
+		$source = mysql_real_escape_string($_POST['source']);
+		$owner = mysql_real_escape_string($_POST['owner']);
 		$update = $tmpl->update_template($id, $source, $style_id, $owner);
 		if ($update) $tmpl->msg('done', '?show=styles&action=show_templates&style_id='.$style_id,1);
 		else $tmpl->msg('error');
@@ -122,7 +122,7 @@ switch ($action) {
 		break;
 	case 'start_edit_css':
 		$id = (int) $_POST['id'];
-		$css = $_POST['css'];
+		$css = mysql_real_escape_string($_POST['css']);
 		$update = $db->update('styles', 'css', $css, 'id', $id);
 		if ($update) $tmpl->msg('done', '?show=styles',1);
 		else $tmpl->msg('error');
@@ -146,7 +146,7 @@ switch ($action) {
 		else $tmpl->msg('error');
 		break;
 	case 'delete_styles_multi':
-		$ids = $_GET['ids'];
+		$ids = mysql_real_escape_string($_GET['ids']);
 		$final_ids = array();
 		$explode = explode('|', $ids);
 		foreach($explode as $id) {
@@ -155,7 +155,7 @@ switch ($action) {
 		$db->multi_delete('styles', 'id', $final_ids);
 		break;
 	case 'delete_templates_multi':
-		$ids = $_GET['ids'];
+		$ids = mysql_real_escape_string($_GET['ids']);
 		$final_ids = array();
 		$explode = explode('|', $ids);
 		foreach($explode as $id) {
