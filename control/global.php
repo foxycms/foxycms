@@ -26,12 +26,7 @@ function read_file($path) {
 
 
 // Includes.
-require_once('../classes/databases.php');
-require_once('../classes/languages.php');
-require_once('../classes/modules.php');
-require_once('../classes/users.php');
-require_once('../classes/libs/Smarty.class.php');
-require_once('../classes/templates.php');
+require_once('../vendor/autoload.php');
 require_once('../includes/db_info.php');
 
 // Defines.

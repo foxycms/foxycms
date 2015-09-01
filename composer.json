@@ -1,0 +1,25 @@
+{
+  "name": "foxycms/foxycms",
+  "description": "Easy, light weight FoxyCMS",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "MrSayed",
+      "email": "idont@know.org"
+    }
+  ],
+
+  "autoload": {
+    "files": [
+      "classes/databases.php",
+      "classes/blocks.php",
+      "classes/languages.php",
+      "classes/modules.php",
+      "classes/templates.php",
+      "classes/uploads.php",
+      "classes/users.php",
+      "classes/libs/Smarty.class.php"
+    ]
+  }
+}

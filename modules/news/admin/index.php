@@ -22,7 +22,7 @@ function cats_tree($id = 0, $parent_id = 0, $pre = '', $list = array()) {
 
 switch ($_GET['action']) {
 	default:
-		$cat_id = (int) isset($_POST['cat_id']) ? $_POST['cat_id'] : 0;
+		$cat_id = (int) isset($_POST[	'cat_id']) ? $_POST['cat_id'] : 0;
 		$module_dev->assign('cats', cats_tree());
 		if (!empty($cat_id)) {
 			$news = $db->fetch('news', 'cat_id', $cat_id, 'time', 'DESC');
@@ -133,7 +133,7 @@ switch ($_GET['action']) {
 		$id = (int) $_GET['id'];
         $cat = $db->fetch('news_cats', 'id', $id);
         $prev_cat = $db->fetch('news_cats', array('[<]order', 'parent_id'), array($cat[0]['order'], $cat[0]['parent_id']), 'order', 'DESC', false, false, 1);
-        if ($prev_cat[0] != '') {
+		if ($prev_cat[0] != '') {
             $db->update('news_cats', 'order', $prev_cat[0]['order'], 'id', $id);
 			$db->update('news_cats', 'order', $cat[0]['order'], 'id', $prev_cat[0]['id']);
 			$module_dev->success_msg('done', '?show=module_news&action=show_categories');
