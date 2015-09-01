@@ -125,8 +125,8 @@ class Databases {
 					break;
 				case 'mysqli':
 					$final_array = array();
-					$mysql_query = mysqli_query($mysql_connect, $query) or die("ERROR: 005");
-					while($r = mysqli_fetch_array($mysql_query)) {
+					$mysql_query = mysqli_query($mysql_connect, mysql_real_escape_string($query)) or die("ERROR: 005");
+					while($r = mysqli_fetch_array(mysql_real_escape_string($mysql_query))) {
 						$final_array[] = $r;
 					}
 					$return = $final_array;
@@ -171,7 +171,7 @@ class Databases {
 					}
 					break;
 				case 'mysqli':
-					$query = mysqli_query($mysql_connect, $sql_query) or die("ERROR: 008");
+					$query = mysqli_query($mysql_connect, mysql_real_escape_string($sql_query)) or die("ERROR: 008");
 					break;
 			}
 		} else die("ERROR: 005");
@@ -204,7 +204,7 @@ class Databases {
 				}
 				break;
 			case 'mysqli':
-				$op = mysqli_query($mysql_connect, "INSERT INTO $table($final_fields) VALUES($final_values)");
+				$op = mysqli_query($mysql_connect, mysql_real_escape_string("INSERT INTO $table($final_fields) VALUES($final_values)"));
 				break;
 		}
 		if($op) return true; else return false;
@@ -236,7 +236,7 @@ class Databases {
 				}
 				break;
 			case 'mysqli':
-				$op = mysqli_query($mysql_connect, $query);
+				$op = mysqli_query($mysql_connect, mysql_real_escape_string($query));
 				break;
 		}
 		if($op) return true; else return false;
@@ -288,7 +288,7 @@ class Databases {
 				}
 				break;
 			case 'mysqli':
-				$op = mysqli_query($mysql_connect, $query) or die("ERROR: 010");
+				$op = mysqli_query($mysql_connect, mysql_real_escape_string($query)) or die("ERROR: 010");
 				break;
 		}
 
@@ -374,7 +374,7 @@ class Databases {
 				}
 				break;
 			case 'mysqli':
-				if(mysqli_query($mysql_connect, $query)) return true; else return false;
+				if(mysqli_query($mysql_connect, mysql_real_escape_string($query))) return true; else return false;
 				break;
 		}
 	}
@@ -392,7 +392,7 @@ class Databases {
 				}
 				break;
 			case 'mysqli':
-				if(mysqli_query($mysql_connect, $query)) return true; else return false;
+				if(mysqli_query($mysql_connect, mysql_real_escape_string($query))) return true; else return false;
 				break;
 		}
 	}
@@ -410,7 +410,7 @@ class Databases {
 				return $stmt->rowCount();
 				break;
 			case 'mysqli':
-				$query = mysqli_query($mysql_connect, $query);
+				$query = mysqli_query($mysql_connect, mysql_real_escape_string($query));
 				return mysqli_num_rows($query);
 				break;
 		}
