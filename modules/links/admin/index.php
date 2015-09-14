@@ -1,7 +1,5 @@
 <?php
-
 if (RUN_PAGE !== true) die();
-
 switch ($_GET['action']) {
 	default:
 		$links = $db->fetch('links', false, false, 'order', 'ASC');
@@ -14,12 +12,12 @@ switch ($_GET['action']) {
 		$module_dev->display_tmp('add.htm');
 		break;
 	case 'start_add_link':
-		$title = $_POST['title'];
-		$url = $_POST['url'];
-		$menu_id = $_POST['menu_id'];
-		$target = $_POST['target'];
-		$order = $_POST['order'];
-		$status = $_POST['status'];
+		$title = mysql_real_escape_string($_POST['title']);
+		$url = mysql_real_escape_string($_POST['url']);
+		$menu_id = mysql_real_escape_string($_POST['menu_id']);
+		$target = mysql_real_escape_string($_POST['target']);
+		$order = mysql_real_escape_string($_POST['order']);
+		$status = mysql_real_escape_string($_POST['status']);
 		$insert = $db->insert('links', array('title', 'url', 'menu_id', 'target', 'order', 'status'), array($title, $url, $menu_id, $target, $order, $status));
 		if ($insert) $module_dev->success_msg('done', '?show=module_links');
 		else $module_dev->error_msg('error');
@@ -34,12 +32,12 @@ switch ($_GET['action']) {
 		break;
 	case 'start_edit_link':
 		$id = (int) $_POST['id'];
-		$title = $_POST['title'];
-		$url = $_POST['url'];
-		$menu_id = $_POST['menu_id'];
-		$target = $_POST['target'];
-		$order = $_POST['order'];
-		$status = $_POST['status'];
+		$title = mysql_real_escape_string($_POST['title']);
+		$url = mysql_real_escape_string($_POST['url']);
+		$menu_id = mysql_real_escape_string($_POST['menu_id']);
+		$target = mysql_real_escape_string($_POST['target']);
+		$order = mysql_real_escape_string($_POST['order']);
+		$status = mysql_real_escape_string($_POST['status']);
 		$update = $db->update('links', array('title', 'url', 'menu_id', 'target', 'order', 'status'), array($title, $url, $menu_id, $target, $order, $status), 'id', $id);
 		if ($update) $module_dev->success_msg('done', '?show=module_links');
 		else $module_dev->error_msg('error');
@@ -71,5 +69,4 @@ switch ($_GET['action']) {
         } else $module_dev->error_msg('error');
         break;
 }
-
 ?>
