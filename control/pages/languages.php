@@ -6,8 +6,8 @@ $action = isset($_GET['action']) ? $_GET['action'] : '';
 switch ($action) {
 	default:
 		$page = isset($_GET['page']) ? $_GET['page'] : '';
-		$languages = $db->fetch('languages',false,false,'id','DESC',$page,$settings['control_max']);
-		$pages_array = $db->pages_array('languages',false,false,$page,$settings['control_max']);
+		$languages = $db->fetch('languages',false,false,'id','DESC',mysql_real_escape_string($page),$settings['control_max']);
+		$pages_array = $db->pages_array('languages',false,false,mysql_real_escape_string($page),$settings['control_max']);
 		
 		$smarty->assign('pages_array', $pages_array);
 		$smarty->assign('current_page', $page);
@@ -21,10 +21,10 @@ switch ($action) {
 		$smarty->assign('tmp_page', 'languages_add.htm');
 		break;
 	case 'start_add_language':
-		$code = $_POST['code'];
-		$name = $_POST['name'];
-		$dir = $_POST['dir'];
-		$charset = $_POST['charset'];
+		$code = mysql_real_escape_string($_POST['code']);
+		$name = mysql_real_escape_string($_POST['name']);
+		$dir = mysql_real_escape_string($_POST['dir']);
+		$charset = mysql_real_escape_string($_POST['charset']);
 		$insert = $db->insert('languages', array('lang_code', 'lang_name','dir','charset'), array($code, $name,$dir,$charset));
 		if ($insert) $tmpl->msg('done', '?show=languages',1);
 		else $tmpl->msg('error');
@@ -39,10 +39,10 @@ switch ($action) {
 		break;
 	case 'start_edit_language':
 		$id = (int) $_POST['id'];
-		$code = $_POST['code'];
-		$name = $_POST['name'];
-		$dir = $_POST['dir'];
-		$charset = $_POST['charset'];
+		$code = mysql_real_escape_string($_POST['code']);
+		$name = mysql_real_escape_string($_POST['name']);
+		$dir = mysql_real_escape_string($_POST['dir']);
+		$charset = mysql_real_escape_string($_POST['charset']);
 		$update = $db->update('languages', array('lang_code', 'lang_name','dir', 'charset'), array($code, $name, $dir, $charset), 'id', $id);
 		if ($update) $tmpl->msg('done', '?show=languages',1);
 		else $tmpl->msg('error');
@@ -57,11 +57,11 @@ switch ($action) {
 		$lang_id = (int) isset($_GET['lang_id']) ? $_GET['lang_id'] : '';
 		$page = isset($_GET['page']) ? $_GET['page'] : '';
 		if (!empty($lang_id)) {
-			$phrases = $db->fetch('phrases', 'lang_id', $lang_id, 'id', 'DESC', $page, $settings['control_max']);
-			$pages_array = $db->pages_array('phrases', 'lang_id', $lang_id, $page, $settings['control_max']);
+			$phrases = $db->fetch('phrases', 'lang_id', $lang_id, 'id', 'DESC', mysql_real_escape_string($page), $settings['control_max']);
+			$pages_array = $db->pages_array('phrases', 'lang_id', $lang_id, mysql_real_escape_string($page), $settings['control_max']);
 		} else {
-			$phrases = $db->fetch('phrases',false,false,'id','DESC',$page, $settings['control_max']);
-			$pages_array = $db->pages_array('phrases',false,false,$page, $settings['control_max']);
+			$phrases = $db->fetch('phrases',false,false,'id','DESC',mysql_real_escape_string($page), $settings['control_max']);
+			$pages_array = $db->pages_array('phrases',false,false,mysql_real_escape_string($page), $settings['control_max']);
 		}
 		$smarty->assign('phrases', $phrases);
 		$smarty->assign('pages_array', $pages_array);
@@ -71,7 +71,7 @@ switch ($action) {
 	case 'search_phrases':
 		$lang_id = (int) $_GET['lang_id'];
 		$page = isset($_GET['page']) ? $_GET['page'] : '';
-		if(isset($_POST['q'])) $q = $_POST['q']; elseif(isset($_GET['q'])) $q = $_GET['q'];
+		if(isset($_POST['q'])) $q = mysql_real_escape_string($_POST['q']); elseif(isset($_GET['q'])) $q = mysql_real_escape_string($_GET['q']);
 		if (!empty($lang_id)) {
 			$phrases = $db->fetch('phrases', array('lang_id','[%]var'), array($lang_id,$q), 'id', 'DESC', $page, $settings['control_max']);
 			$pages_array = $db->pages_array('phrases', '[%]var', $q, $page, $settings['control_max']);
@@ -95,9 +95,9 @@ switch ($action) {
 	case 'start_add_phrase':
 		foreach($_POST['var'] as $key=>$var) {
 			$var = $var;
-			$lang_id = $_POST['lang_id'][$key];
-			$text = $_POST['text'][$key];
-			$owner = $_POST['owner'][$key];
+			$lang_id = mysql_real_escape_string($_POST['lang_id'][$key]);
+			$text = mysql_real_escape_string($_POST['text'][$key]);
+			$owner = mysql_real_escape_string($_POST['owner'][$key]);
 			$add = $lang->add_phrase($var, $text, $lang_id, $owner);
 		}		
 		if ($add) $tmpl->msg('done', '?show=languages&action=show_phrases&lang_id='.$lang_id,1);
@@ -105,10 +105,10 @@ switch ($action) {
 		break;
 	case 'start_edit_phrases':
 		foreach($_POST['id'] as $key=>$id) {
-			$var = $_POST['var'][$key];
-			$lang_id = $_POST['lang_id'][$key];
-			$text = $_POST['text'][$key];
-			$owner = $_POST['owner'][$key];
+			$var = mysql_real_escape_string($_POST['var'][$key]);
+			$lang_id = mysql_real_escape_string($_POST['lang_id'][$key]);
+			$text = mysql_real_escape_string($_POST['text'][$key]);
+			$owner = mysql_real_escape_string($_POST['owner'][$key]);
 			$update = $lang->update_phrase($id, $text, $lang_id, $owner);
 		}
 		if ($update) $tmpl->msg('done', '?show=languages&action=show_phrases&lang_id='.$lang_id,1);
@@ -160,16 +160,16 @@ switch ($action) {
 	case 'start_import_language':
 		$tmpName = $_FILES['file']['tmp_name'];
 		$content = fread(fopen($tmpName, "r"), filesize($tmpName));		
-		$insert = $db->insert('languages',array('lang_code','lang_name','dir','charset'),array($_POST['code'],$_POST['name'],$_POST['dir'],$_POST['charset']));
+		$insert = $db->insert('languages',array('lang_code','lang_name','dir','charset'),array(mysql_real_escape_string($_POST['code']),mysql_real_escape_string($_POST['name']),mysql_real_escape_string($_POST['dir']),mysql_real_escape_string($_POST['charset'])));
 		if($insert) $get = $db->fetch('languages',false,false,'id','DESC'); $lang_id = $get[0]['id'];
 		
-		$owner = $_POST['owner'];
+		$owner = mysql_real_escape_string($_POST['owner']);
 		
 		if($lang->import($content,$lang_id,$owner)) $tmpl->msg('done', '?show=languages&action=show_languages',1);
 		else $tmpl->msg('error');
 		break;
 	case 'delete_phrases_multi':
-		$ids = $_GET['ids'];
+		$ids = mysql_real_escape_string($_GET['ids']);
 		$final_ids = array();
 		$explode = explode('|', $ids);
 		foreach($explode as $id) {
@@ -178,7 +178,7 @@ switch ($action) {
 		$db->multi_delete('phrases', 'id', $final_ids);
 		break;
 	case 'delete_languages_multi':
-		$ids = $_GET['ids'];
+		$ids = mysql_real_escape_string($_GET['ids']);
 		$final_ids = array();
 		$explode = explode('|', $ids);
 		foreach($explode as $id) {
